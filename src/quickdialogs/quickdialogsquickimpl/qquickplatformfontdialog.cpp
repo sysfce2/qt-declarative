@@ -53,7 +53,7 @@ QQuickPlatformFontDialog::QQuickPlatformFontDialog(QObject *parent)
         return;
     }
 
-    m_dialog = qobject_cast<QQuickFontDialogImpl *>(fontDialogComponent.create());
+    m_dialog = qobject_cast<QQuickFontDialogImpl *>(fontDialogComponent.beginCreate(qmlContext));
 
     if (!m_dialog) {
         qmlWarning(parent) << "Failed to create an instance of the non-native FontDialog:\n"
@@ -62,6 +62,8 @@ QQuickPlatformFontDialog::QQuickPlatformFontDialog(QObject *parent)
     }
 
     m_dialog->setParent(this);
+
+    fontDialogComponent.completeCreate();
 
     connect(m_dialog, &QQuickDialog::accepted, this, &QPlatformDialogHelper::accept);
     connect(m_dialog, &QQuickDialog::rejected, this, &QPlatformDialogHelper::reject);

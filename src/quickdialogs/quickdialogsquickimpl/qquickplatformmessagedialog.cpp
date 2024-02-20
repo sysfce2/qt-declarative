@@ -38,7 +38,7 @@ QQuickPlatformMessageDialog::QQuickPlatformMessageDialog(QObject *parent)
         return;
     }
 
-    m_dialog = qobject_cast<QQuickMessageDialogImpl *>(messageDialogComponent.create());
+    m_dialog = qobject_cast<QQuickMessageDialogImpl *>(messageDialogComponent.beginCreate(qmlContext));
 
     if (!m_dialog) {
         qmlWarning(parent) << "Failed to create an instance of the non-native MessageBox:\n"
@@ -47,6 +47,8 @@ QQuickPlatformMessageDialog::QQuickPlatformMessageDialog(QObject *parent)
     }
 
     m_dialog->setParent(this);
+
+    messageDialogComponent.completeCreate();
 
     connect(m_dialog, &QQuickDialog::accepted, this, &QPlatformDialogHelper::accept);
     connect(m_dialog, &QQuickDialog::rejected, this, &QPlatformDialogHelper::reject);

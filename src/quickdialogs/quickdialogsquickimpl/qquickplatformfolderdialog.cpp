@@ -46,13 +46,15 @@ QQuickPlatformFolderDialog::QQuickPlatformFolderDialog(QObject *parent)
         qmlWarning(parent) << "Failed to load non-native FolderDialog implementation:\n" << folderDialogComponent.errorString();
         return;
     }
-    m_dialog = qobject_cast<QQuickFolderDialogImpl*>(folderDialogComponent.create());
+    m_dialog = qobject_cast<QQuickFolderDialogImpl*>(folderDialogComponent.beginCreate(qmlContext));
     if (!m_dialog) {
         qmlWarning(parent) << "Failed to create an instance of the non-native FolderDialog:\n" << folderDialogComponent.errorString();
         return;
     }
     // Give it a parent until it's parented to the window in show().
     m_dialog->setParent(this);
+
+    folderDialogComponent.completeCreate();
 
     connect(m_dialog, &QQuickDialog::accepted, this, &QPlatformDialogHelper::accept);
     connect(m_dialog, &QQuickDialog::rejected, this, &QPlatformDialogHelper::reject);

@@ -43,7 +43,7 @@ QQuickPlatformColorDialog::QQuickPlatformColorDialog(QObject *parent)
         return;
     }
 
-    m_dialog = qobject_cast<QQuickColorDialogImpl *>(colorDialogComponent.create());
+    m_dialog = qobject_cast<QQuickColorDialogImpl *>(colorDialogComponent.beginCreate(qmlContext));
     if (!m_dialog) {
         qmlWarning(parent) << "Failed to create an instance of the non-native ColorDialog:\n"
                            << colorDialogComponent.errorString();
@@ -51,6 +51,8 @@ QQuickPlatformColorDialog::QQuickPlatformColorDialog(QObject *parent)
     }
     // Give it a parent until it's parented to the window in show().
     m_dialog->setParent(this);
+
+    colorDialogComponent.completeCreate();
 
     connect(m_dialog, &QQuickDialog::accepted, this, &QPlatformDialogHelper::accept);
     connect(m_dialog, &QQuickDialog::rejected, this, &QPlatformDialogHelper::reject);
